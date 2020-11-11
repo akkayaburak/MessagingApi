@@ -15,6 +15,8 @@ namespace MessagingApi.Entities
 
         public string Context { get; set; }
 
-        public User user;
+        public User FromUser;
+
+        public User ToUser;
     }
 }

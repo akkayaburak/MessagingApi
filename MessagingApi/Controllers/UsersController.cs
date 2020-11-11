@@ -25,17 +25,19 @@ namespace MessagingApi.Controllers
         private IMapper _mapper;
         private readonly AppSettings _appSettings;
         private readonly ILogger<UsersController> _logger;
+        private ITokenService _tokenService;
 
         public UsersController(
             IUserService userService,
             IMapper mapper,
             IOptions<AppSettings> appSettings,
-            ILogger<UsersController> logger)
+            ILogger<UsersController> logger,ITokenService tokenService)
         {
             _userService = userService;
             _mapper = mapper;
             _appSettings = appSettings.Value;
             _logger = logger;
+            _tokenService = tokenService;
         }
 
         [AllowAnonymous]
@@ -45,7 +47,11 @@ namespace MessagingApi.Controllers
             var user = _userService.Authenticate(model.Username, model.Password);
 
             if (user == null)
+            {
+                _logger.LogError($"User not found {0}",model.Username);
                 return BadRequest(new { message = "Username or password is incorrect" });
+            }
+                
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
@@ -60,7 +66,10 @@ namespace MessagingApi.Controllers
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
-
+            _logger.LogInformation($"User found {0}", model.Username);
+            var tokenModel = new TokenModel(tokenString, user.Id);
+            var tokenModelMapped = _mapper.Map<Token>(tokenModel);
+            _tokenService.Save(tokenModelMapped);
             // return basic user info and authentication token
             return Ok(new
             {
@@ -83,10 +92,12 @@ namespace MessagingApi.Controllers
             {
                 // create user
                 _userService.Create(user, model.Password);
+                _logger.LogInformation($"Trying to find User: {0}", model.Username);
                 return Ok();
             }
             catch (AppException ex)
             {
+                _logger.LogError($"Could not register User {0}", model.Username);
                 // return error message if there was an exception
                 return BadRequest(new { message = ex.Message });
             }
@@ -106,6 +117,7 @@ namespace MessagingApi.Controllers
         {
             var user = _userService.GetById(id);
             var model = _mapper.Map<UserModel>(user);
+            _logger.LogInformation($"Found User: {0}", model.Username);
             return Ok(model);
         }
 
@@ -114,17 +126,20 @@ namespace MessagingApi.Controllers
         {
             // map model to entity and set id
             var user = _mapper.Map<User>(model);
+
             user.Id = id;
 
             try
             {
                 // update user 
+                _logger.LogInformation($"Updating User: {0}", model.Username);
                 _userService.Update(user, model.Password);
                 return Ok();
             }
             catch (AppException ex)
             {
                 // return error message if there was an exception
+                _logger.LogError($"Could not update User: {0}", model.Username);
                 return BadRequest(new { message = ex.Message });
             }
         }
@@ -133,6 +148,7 @@ namespace MessagingApi.Controllers
         public IActionResult Delete(int id)
         {
             _userService.Delete(id);
+            _logger.LogInformation($"Deleting User with Id : {0}",id);
             return Ok();
         }
     }
