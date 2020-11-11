@@ -34,9 +34,7 @@ namespace MessagingApi
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddCors();
             services.AddControllers();
-
             services.AddDbContext<DataContext>();
-
             var appSettingsSection = _configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
 
@@ -80,12 +78,9 @@ namespace MessagingApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DataContext dataContext)
-        {
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DataContext dataContext, ILoggerFactory loggerFactory)
+        {           
             dataContext.Database.Migrate();
-
-
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

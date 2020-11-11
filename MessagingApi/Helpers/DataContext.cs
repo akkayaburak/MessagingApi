@@ -24,8 +24,6 @@ namespace MessagingApi.Helpers
 
         public DbSet<User> Users { get; set; }
 
-        public DbSet<Message> Messages { get; set; }
-
-
+        public DbSet<Log> Logs { get; set; }
     }
 }

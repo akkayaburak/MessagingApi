@@ -24,18 +24,18 @@ namespace MessagingApi.Controllers
         private IUserService _userService;
         private IMapper _mapper;
         private readonly AppSettings _appSettings;
-        private readonly ILogger _logger;
+        private readonly ILogger<UsersController> _logger;
 
         public UsersController(
             IUserService userService,
             IMapper mapper,
             IOptions<AppSettings> appSettings,
-            ILoggerFactory loggerFactory)
+            ILogger<UsersController> logger)
         {
             _userService = userService;
             _mapper = mapper;
             _appSettings = appSettings.Value;
-            _logger = loggerFactory.CreateLogger<UsersController>();
+            _logger = logger;
         }
 
         [AllowAnonymous]
@@ -97,6 +97,7 @@ namespace MessagingApi.Controllers
         {
             var users = _userService.GetAll();
             var model = _mapper.Map<IList<UserModel>>(users);
+            _logger.LogInformation("Get all users");
             return Ok(model);
         }
 
