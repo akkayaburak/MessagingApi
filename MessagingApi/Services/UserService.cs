@@ -16,6 +16,18 @@ namespace MessagingApi.Services
             _context = context;
         }
 
+        public User FindByUserName(string username)
+        {
+            var user = _context.Users
+                .Where(u => u.Username == username)
+                .FirstOrDefault();
+            if(user == null)
+            {
+                throw new AppException("User could not be found.");
+            }
+            return user;
+        }
+
         public User Authenticate(string username, string password)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))

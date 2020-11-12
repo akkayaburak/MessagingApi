@@ -15,5 +15,8 @@ namespace MessagingApi.Entities
         public byte[] PasswordSalt { get; set; }
 
         public Token Token { get; set; }
+
+        public virtual ICollection<Message> MessagesSent { get; set; }
+        public virtual ICollection<Message> MessagesReceived { get; set; }
     }
 }

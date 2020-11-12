@@ -16,6 +16,7 @@ namespace MessagingApi.Helpers
             CreateMap<RegisterModel, User>();
             CreateMap<UpdateModel, User>();
             CreateMap<TokenModel, Token>();
+            CreateMap<MessageSaveModel, Message>();
         }
     }
 }

@@ -9,14 +9,13 @@ namespace MessagingApi.Entities
     {
         public int Id{ get; set; }
 
-        public int FromId { get; set; }
-
-        public int ToId { get; set; }
-
         public string Context { get; set; }
 
-        public User FromUser;
+        public User Sender { get; set; }
+        public int SenderId { get; set; }
 
-        public User ToUser;
+        public User Receiver { get; set; }
+
+        public int ReceiverId { get; set; }
     }
 }

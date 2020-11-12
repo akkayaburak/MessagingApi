@@ -22,10 +22,27 @@ namespace MessagingApi.Helpers
             options.UseSqlServer(Configuration.GetConnectionString("MessagingServiceDatabase"));
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Message>()
+                .HasOne(p => p.Receiver)
+                .WithMany(t => t.MessagesReceived)
+                .HasForeignKey(m => m.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Message>()
+                .HasOne(p => p.Sender)
+                .WithMany(t => t.MessagesSent)
+                .HasForeignKey(m => m.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
+
         public DbSet<User> Users { get; set; }
 
         public DbSet<Log> Logs { get; set; }
 
         public DbSet<Token> Tokens { get; set; }
+
+        public DbSet<Message> Messages { get; set; }
     }
 }
