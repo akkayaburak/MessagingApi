@@ -26,18 +26,21 @@ namespace MessagingApi.Controllers
         private readonly AppSettings _appSettings;
         private readonly ILogger<UsersController> _logger;
         private ITokenService _tokenService;
-
+        private IBlockService _blockService;
         public UsersController(
             IUserService userService,
             IMapper mapper,
             IOptions<AppSettings> appSettings,
-            ILogger<UsersController> logger,ITokenService tokenService)
+            ILogger<UsersController> logger,
+            ITokenService tokenService,
+            IBlockService blockService)
         {
             _userService = userService;
             _mapper = mapper;
             _appSettings = appSettings.Value;
             _logger = logger;
             _tokenService = tokenService;
+            _blockService = blockService;
         }
 
         [AllowAnonymous]
@@ -150,6 +153,42 @@ namespace MessagingApi.Controllers
             _userService.Delete(id);
             _logger.LogInformation($"Deleting User with Id : {0}",id);
             return Ok();
+        }
+
+        [HttpPost("block")]
+        public IActionResult Block([FromBody] BlockModel blockModel)
+        {
+            if(blockModel != null)
+            {
+                if (!string.IsNullOrEmpty(blockModel.blockFromUsername) && string.IsNullOrEmpty(blockModel.blockToUsername))
+                {
+                    var blockFrom = _userService.FindByUserName(blockModel.blockFromUsername);
+                    var blockTo = _userService.FindByUserName(blockModel.blockToUsername);
+
+                    if(blockFrom!=null && blockTo != null)
+                    {
+                        _blockService.Block(blockFrom.Id, blockTo.Id, blockModel.isBlocked);
+                        return Ok(new
+                        {
+                            blockFrom = blockFrom.Username,
+                            blockTo = blockTo.Username,
+                            blockModel.isBlocked
+                        });
+                    }
+                    else
+                    {
+                        _logger.LogError("Blocking person could not be found.");
+                        return BadRequest("Blocking person could not be found.");
+                    }
+                }
+                else
+                {
+                    _logger.LogError("Credentials are not sufficient.");
+                    return BadRequest("Credentials are not sufficient.");
+                }
+            }
+            _logger.LogError("Credentials needed.");
+            return BadRequest("Credentials needed.");
         }
     }
 }

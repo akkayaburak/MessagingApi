@@ -77,8 +77,6 @@ namespace MessagingApi.Controllers
                 msgs.Add(new MessageShowModel(msg.Context, msg.Sender.Username, msg.ReceiverId));
             }
             return Ok(msgs);
-        }
-
-        
+        }   
     }
 }
