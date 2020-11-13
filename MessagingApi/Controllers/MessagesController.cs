@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using MessagingApi.Entities;
 using MessagingApi.Models;
 using MessagingApi.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -15,43 +12,50 @@ namespace MessagingApi.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class MessagesController : ControllerBase
     {
-        private ITokenService _tokenService;
         private readonly ILogger<MessagesController> _logger;
         private IMapper _mapper;
         private IUserService _userService;
         private IMessageService _messageService;
+        private IBlockService _blockService;
+   
         public MessagesController(
-            ITokenService tokenService,
             ILogger<MessagesController> logger,
             IMapper mapper,
             IUserService userService,
-            IMessageService messageService
+            IMessageService messageService,
+            IBlockService blockService
             )
         {
-            _tokenService = tokenService;
             _logger = logger;
             _mapper = mapper;
             _userService = userService;
             _messageService = messageService;
+            _blockService = blockService;
         }
 
         [HttpPost("send")]
         public IActionResult Send([FromBody] MessageModel messageModel)
         {
-            var isAuthenticated = _tokenService.IsAuthenticated(messageModel.Token);
-            if (isAuthenticated == null)
-            {
-                return BadRequest("Sender is not Authenticated");
-            }
+            var senderUser = _userService.FindByUserName(messageModel.Username);
             var receiverUser = _userService.FindByUserName(messageModel.ReceiverUsername);
             if(receiverUser != null)
             {
-                MessageSaveModel messageSaveModel = new MessageSaveModel(isAuthenticated.UserId, receiverUser.Id, messageModel.Context);
+                if (_blockService.IsBlocked(receiverUser.Id, senderUser.Id))
+                {
+                    _logger.LogInformation($"Sender user {0} is blocked by {1}", senderUser.Id, receiverUser.Id);
+                    return BadRequest("Sender user is blocked.");
+                }
+                MessageSaveModel messageSaveModel = new MessageSaveModel(senderUser.Id, receiverUser.Id, messageModel.Context);
                 var messageModelMapped = _mapper.Map<Message>(messageSaveModel);
                 _messageService.Save(messageModelMapped);
+            }
+            else
+            {
+                _logger.LogError("Receiver user could not be found.");
+                return BadRequest("Receiver user could not be found.");
             }
             
             return Ok(new
@@ -66,7 +70,15 @@ namespace MessagingApi.Controllers
         public IActionResult GetById(int id)
         {
             var messages = _messageService.GetMessagesBySenderId(id);
-            return Ok(messages);
+            _logger.LogInformation($"User : {0} message information requested.", messages.First().Sender.Username);
+            List<MessageShowModel> msgs = new List<MessageShowModel>();
+            foreach(var msg in messages)
+            {
+                msgs.Add(new MessageShowModel(msg.Context, msg.Sender.Username, msg.ReceiverId));
+            }
+            return Ok(msgs);
         }
+
+        
     }
 }

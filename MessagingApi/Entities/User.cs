@@ -18,5 +18,9 @@ namespace MessagingApi.Entities
 
         public virtual ICollection<Message> MessagesSent { get; set; }
         public virtual ICollection<Message> MessagesReceived { get; set; }
+
+        public virtual ICollection<Block> BlocksBy { get; set; }
+
+        public virtual ICollection<Block> BlocksTo { get; set; }
     }
 }

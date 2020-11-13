@@ -1,9 +1,7 @@
 ﻿using MessagingApi.Entities;
 using MessagingApi.Helpers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace MessagingApi.Services
 {

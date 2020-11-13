@@ -11,7 +11,7 @@ namespace MessagingApi.Models
 
         public string ReceiverUsername { get; set; }
 
-        public string Token { get; set; }
+        //public string Token { get; set; }
 
         public string Context { get; set; }
     }

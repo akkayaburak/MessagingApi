@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MessagingApi.Helpers
 {
@@ -35,6 +36,18 @@ namespace MessagingApi.Helpers
                 .WithMany(t => t.MessagesSent)
                 .HasForeignKey(m => m.SenderId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Block>()
+                .HasOne(p => p.BlockBy)
+                .WithMany(t => t.BlocksBy)
+                .HasForeignKey(m => m.BlockById)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Block>()
+                .HasOne(p => p.BlockTo)
+                .WithMany(t => t.BlocksTo)
+                .HasForeignKey(m => m.BlockToId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
 
         public DbSet<User> Users { get; set; }
@@ -44,5 +57,7 @@ namespace MessagingApi.Helpers
         public DbSet<Token> Tokens { get; set; }
 
         public DbSet<Message> Messages { get; set; }
+
+        public DbSet<Block> Blocks { get; set; }
     }
 }

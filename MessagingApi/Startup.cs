@@ -77,6 +77,7 @@ namespace MessagingApi
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IMessageService, MessageService>();
+            services.AddScoped<IBlockService, BlockService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
