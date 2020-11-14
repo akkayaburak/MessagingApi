@@ -18,6 +18,10 @@ namespace MessagingApi.Services
 
         public User FindByUserName(string username)
         {
+            if (string.IsNullOrEmpty(username))
+            {
+                throw new AppException("Username invalid.");
+            }
             var user = _context.Users
                 .Where(u => u.Username == username)
                 .FirstOrDefault();

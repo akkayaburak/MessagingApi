@@ -11,16 +11,10 @@ namespace MessagingApi.Helpers
 {
     public class DataContext : DbContext
     {
-        protected readonly IConfiguration Configuration;
 
-        public DataContext(IConfiguration configuration)
+        public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
-            Configuration = configuration;
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
-        {
-            options.UseSqlServer(Configuration.GetConnectionString("MessagingServiceDatabase"));
+            
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

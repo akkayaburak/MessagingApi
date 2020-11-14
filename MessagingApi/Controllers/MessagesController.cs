@@ -74,7 +74,11 @@ namespace MessagingApi.Controllers
             List<MessageShowModel> msgs = new List<MessageShowModel>();
             foreach(var msg in messages)
             {
-                msgs.Add(new MessageShowModel(msg.Context, msg.Sender.Username, msg.ReceiverId));
+                if(msg.SenderId != msg.ReceiverId)
+                {
+                    msgs.Add(new MessageShowModel(msg.Context, msg.Sender.Username, msg.ReceiverId));
+                }
+                    
             }
             return Ok(msgs);
         }   

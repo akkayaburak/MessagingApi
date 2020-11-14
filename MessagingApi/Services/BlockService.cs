@@ -30,6 +30,7 @@ namespace MessagingApi.Services
             }
             
             _context.Blocks.Add(block);
+            _context.SaveChanges();
         }
 
         public bool IsBlocked(int blockById, int blockToId)

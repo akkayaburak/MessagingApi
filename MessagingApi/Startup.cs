@@ -30,11 +30,12 @@ namespace MessagingApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddDbContext<DataContext>(options =>
+            options.UseSqlServer(_configuration.GetConnectionString("MessagingServiceDatabase")));
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddCors();
             services.AddControllers();
-            services.AddDbContext<DataContext>();
+            //services.AddDbContext<DataContext>();
             var appSettingsSection = _configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
 
@@ -78,12 +79,14 @@ namespace MessagingApi
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IMessageService, MessageService>();
             services.AddScoped<IBlockService, BlockService>();
+
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DataContext dataContext, ILoggerFactory loggerFactory)
         {           
-            dataContext.Database.Migrate();
+            //dataContext.Database.Migrate();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
