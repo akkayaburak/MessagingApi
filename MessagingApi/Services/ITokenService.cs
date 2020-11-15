@@ -7,7 +7,5 @@ namespace MessagingApi.Services
         void Save(Token token);
 
         void Delete(int id);
-
-        Token IsAuthenticated(string token);
     }
 }

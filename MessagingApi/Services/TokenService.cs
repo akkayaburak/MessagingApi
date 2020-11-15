@@ -30,17 +30,5 @@ namespace MessagingApi.Services
                 _context.SaveChanges();
             }
         }
-
-        public Token IsAuthenticated(string token)
-        {
-            var foundToken =_context.Tokens
-                .Where(t => t.UserToken == token)
-                .FirstOrDefault();
-            if (string.IsNullOrEmpty(foundToken.UserToken))
-            {
-                throw new AppException("Tokens did not match!");
-            }
-            return foundToken;
-        }
     }
 }

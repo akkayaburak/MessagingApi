@@ -17,9 +17,11 @@ namespace MessagingApi.Services
         }
         public void Block(int blockById, int blockToId, bool decide)
         {
-            Block block = new Block();
-            block.BlockById = blockById;
-            block.BlockToId = blockToId;
+            Block block = new Block
+            {
+                BlockById = blockById,
+                BlockToId = blockToId
+            };
             if (decide == true)
             {
                 block.IsBlocked = true;
@@ -35,6 +37,10 @@ namespace MessagingApi.Services
 
         public bool IsBlocked(int blockById, int blockToId)
         {
+            if(blockById == blockToId)
+            {
+                throw new AppException("User can not block him/her self.");
+            }
             var block = _context.Blocks
                  .Where(u => u.BlockById == blockById)
                  .Where(b => b.BlockToId == blockToId)
