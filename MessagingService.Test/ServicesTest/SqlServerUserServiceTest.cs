@@ -11,7 +11,7 @@ namespace MessagingService.Test
     {
         public SqlServerUserServiceTest() : base(
             new DbContextOptionsBuilder<DataContext>()
-            .UseSqlServer("Data Source=DESKTOP-PSJOJTP\\SQLEXPRESS;Database=MessagingServiceTest;Trusted_Connection=True;")
+            .UseSqlServer("Data Source=(localdb);Database=MessagingServiceTest;Trusted_Connection=True;")
             .Options)
         {
 
