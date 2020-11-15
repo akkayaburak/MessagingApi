@@ -5,10 +5,10 @@ using System;
 
 namespace MessagingService.Test
 {
-    public class UsersControllerTest
+    public class SqlServerServicesTest
     {
         protected DbContextOptions<DataContext> ContextOptions { get; }
-        public UsersControllerTest(DbContextOptions<DataContext> contextOptions)
+        public SqlServerServicesTest(DbContextOptions<DataContext> contextOptions)
         {
             ContextOptions = contextOptions;
             Seed();

@@ -7,7 +7,7 @@ using Xunit;
 
 namespace MessagingService.Test
 {
-    public class SqlServerUserServiceTest : UsersControllerTest
+    public class SqlServerUserServiceTest : SqlServerServicesTest
     {
         public SqlServerUserServiceTest() : base(
             new DbContextOptionsBuilder<DataContext>()
