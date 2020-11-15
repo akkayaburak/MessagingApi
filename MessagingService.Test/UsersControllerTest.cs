@@ -1,5 +1,4 @@
-﻿using Xunit;
-using MessagingApi.Entities;
+﻿using MessagingApi.Entities;
 using MessagingApi.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System;
